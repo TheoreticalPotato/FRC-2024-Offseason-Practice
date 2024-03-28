@@ -9,7 +9,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,8 +31,8 @@ public class SwerveModule {
     private TalonFXConfiguration rotorConfig;
     private final PositionVoltage rotorPosition = new PositionVoltage(0.0);
 
-    private CANcoder imu;
-    public CANcoderConfiguration imuConfig;
+    private CANcoder CANCoder;
+    public CANcoderConfiguration CANCoderConfig;
 
     /**
      * Constructs a new SwerveModule
@@ -56,7 +55,7 @@ public class SwerveModule {
         throttleConfig.Feedback.SensorToMechanismRatio = Constants.Swerve.THROTTLE_GEAR_RATIO;
 
         throttleConfig.CurrentLimits.SupplyCurrentLimit = Constants.Swerve.THROTTLE_CURRENT_LIMIT;
-        throttleConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        throttleConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         throttleConfig.CurrentLimits.SupplyCurrentThreshold = Constants.Swerve.THROTTLE_CURRENT_THRESHOLD;
         throttleConfig.CurrentLimits.SupplyTimeThreshold = Constants.Swerve.THROTTLE_CURRENT_THRESHOLD_TIME;
 
@@ -91,17 +90,18 @@ public class SwerveModule {
 
         rotor = new TalonFX(rotorID, Constants.Swerve.CANBUS_ID);
         rotor.getConfigurator().apply(rotorConfig);
-        resetToAbsolute();
+        // resetToAbsolute();
 
-        /* imu */
-        imuConfig = new CANcoderConfiguration();
-        imuConfig.MagnetSensor.SensorDirection = Constants.Swerve.CAN_CODER_INVERT;
-        imuConfig.withMagnetSensor(new MagnetSensorConfigs()
+
+        /* CANCoder */
+        CANCoderConfig = new CANcoderConfiguration();
+        CANCoderConfig.MagnetSensor.SensorDirection = Constants.Swerve.CAN_CODER_INVERT;
+        CANCoderConfig.withMagnetSensor(new MagnetSensorConfigs()
                 .withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1)
                 .withMagnetOffset(moduleAngleOffset));
 
-        imu = new CANcoder(canCoderID, Constants.Swerve.CANBUS_ID);
-        imu.getConfigurator().apply(imuConfig);
+        CANCoder = new CANcoder(canCoderID, Constants.Swerve.CANBUS_ID);
+        CANCoder.getConfigurator().apply(CANCoderConfig);
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -123,11 +123,11 @@ public class SwerveModule {
     }
 
     public Rotation2d getCANcoder() {
-        return Rotation2d.fromRotations(imu.getAbsolutePosition().getValue());
+        return Rotation2d.fromRotations(CANCoder.getAbsolutePosition().getValue());
     }
 
     public void resetToAbsolute() {
-        rotor.setPosition(getCANcoder().getRotations());
+        rotor.setPosition(CANCoder.getAbsolutePosition().getValue());
     }
 
     public SwerveModuleState getState() {

@@ -38,6 +38,6 @@ public class TeleopSwerve extends Command {
                 new Translation2d(translationVal * translationVal * translationVal, strafeVal * strafeVal * strafeVal).times(Swerve.MAX_SPEED_MPS),
                 rotationVal * rotationVal * rotationVal * Swerve.MAX_ANGULAR_VELOCITY,
                 true,
-                true);
+                false);
     }
 }

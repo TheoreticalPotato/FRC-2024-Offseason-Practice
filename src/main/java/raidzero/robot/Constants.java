@@ -20,7 +20,7 @@ public final class Constants {
         public static final double WHEEL_DIAMETER_M = Units.inchesToMeters(4.0);
         public static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_M * Math.PI;
 
-        public static final double THROTTLE_GEAR_RATIO = (6.75 / 1.0);
+        public static final double THROTTLE_GEAR_RATIO = (6.12 / 1.0);
         public static final double ROTOR_GEAR_RATIO = ((150.0 / 7.0) / 1.0);
 
         public static final double THROTTLE_VEL_CONVERSION_FACTOR = (1 / THROTTLE_GEAR_RATIO / 60) * WHEEL_DIAMETER_M
@@ -78,8 +78,8 @@ public final class Constants {
         public static final double ROTATION_KD = 0.0;
 
         /* Swerve Profiling Values */
-        public static final double THROTTLE_FREE_SPEED = 6380.0;
-        public static final double THROTTLE_EFFICIENCY = 0.85;
+        public static final double THROTTLE_FREE_SPEED = 6000.0;
+        public static final double THROTTLE_EFFICIENCY = 0.87;
         public static final double MAX_SPEED_MPS = (THROTTLE_FREE_SPEED * THROTTLE_EFFICIENCY) / THROTTLE_GEAR_RATIO
                 * Math.PI * WHEEL_DIAMETER_M / 60.0;
                 
