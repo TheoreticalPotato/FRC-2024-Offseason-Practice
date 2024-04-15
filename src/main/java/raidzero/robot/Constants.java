@@ -31,10 +31,10 @@ public final class Constants {
 
         // Swerve Kinematics
         public static final SwerveDriveKinematics SWERVE_DRIVE_KINEMATICS = new SwerveDriveKinematics(
-                new Translation2d(WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0),
-                new Translation2d(WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0),
                 new Translation2d(-WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0),
-                new Translation2d(-WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0));
+                new Translation2d(-WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0),
+                new Translation2d(WHEEL_BASE / 2.0, TRACK_WIDTH / 2.0),
+                new Translation2d(WHEEL_BASE / 2.0, -TRACK_WIDTH / 2.0));
 
         // Swerve Current Limiting
         public static final int ROTOR_CURRENT_LIMIT = 25;
@@ -93,22 +93,22 @@ public final class Constants {
         public static final int THROTTLE_FL_ID = 1;
         public static final int ROTOR_FL_ID = 2;
         public static final int CAN_CODER_FL_ID = 1;
-        public static final double MODULE_FL_OFFSET = -0.469482;
+        public static final double MODULE_FL_OFFSET = -0.702881;
 
         public static final int THROTTLE_BL_ID = 3;
         public static final int ROTOR_BL_ID = 4;
         public static final int CAN_CODER_BL_ID = 2;
-        public static final double MODULE_BL_OFFSET = -0.329102;
+        public static final double MODULE_BL_OFFSET = -0.896729;
 
         public static final int THROTTLE_BR_ID = 5;
         public static final int ROTOR_BR_ID = 6;
         public static final int CAN_CODER_BR_ID = 3;
-        public static final double MODULE_BR_OFFSET = -0.744873;
+        public static final double MODULE_BR_OFFSET = -0.525635;
 
         public static final int THROTTLE_FR_ID = 7;
         public static final int ROTOR_FR_ID = 8;
         public static final int CAN_CODER_FR_ID = 4;
-        public static final double MODULE_FR_OFFSET = -0.875244;
+        public static final double MODULE_FR_OFFSET = -0.109375;
 
         public static final String CANBUS_ID = "seCANdary";
 

@@ -9,6 +9,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -49,7 +50,7 @@ public class SwerveModule {
         /* Throttle */
         throttleConfig = new TalonFXConfiguration();
 
-        throttleConfig.MotorOutput.Inverted = Constants.Swerve.THROTTLE_INVERT;
+        throttleConfig.MotorOutput.Inverted = !throttleInversion ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
         throttleConfig.MotorOutput.NeutralMode = Constants.Swerve.THROTTLE_NEUTRAL_MODE;
 
         throttleConfig.Feedback.SensorToMechanismRatio = Constants.Swerve.THROTTLE_GEAR_RATIO;
