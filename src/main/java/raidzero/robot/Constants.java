@@ -118,4 +118,12 @@ public final class Constants {
 
         public static final double STICK_DEADBAND = 0.1;
     }
+
+    public static final class Arm{
+        public static final int ARM_LEAD_ID = 0;
+        public static final int ARM_FOLLOW_ID = 1;
+
+        public static final int WRIST_LEAD_ID = 2;
+        public static final int WRIST_FOLLOW_ID = 3;
+    }
 }

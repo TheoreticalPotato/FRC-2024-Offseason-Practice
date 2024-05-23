@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package raidzero.robot;
+import raidzero.robot.subsystems.Arm;
+import raidzero.robot.subsystems.Wrist;
 
 import org.littletonrobotics.junction.LoggedRobot;
 
@@ -32,6 +34,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotInit() {
         robotContainer = new RobotContainer();
+        
     }
 
     /**
@@ -91,6 +94,8 @@ public class Robot extends LoggedRobot {
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
         // this line or comment it out.
+        Arm.getSystem().valueMove(-0.1);
+        Wrist.getSystem().valueMove(0.1);
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
@@ -99,6 +104,8 @@ public class Robot extends LoggedRobot {
     /** This function is called periodically during operator control. */
     @Override
     public void teleopPeriodic() {
+        Arm.getSystem().getLimit();
+        Wrist.getSystem().getLimit();
     }
 
     @Override

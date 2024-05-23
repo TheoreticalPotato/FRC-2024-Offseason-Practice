@@ -7,26 +7,28 @@ import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
+import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidzero.robot.Constants;
 
-public class Arm {
+public class Wrist {
     private TalonFX leadFx;
     private TalonFX followFx;
 
     private TalonFXConfiguration config;
     private HardwareLimitSwitchConfigs limitConfigs;
 
-    private static Arm armSys = new Arm();
+    private static Wrist wristSys = new Wrist();
 
-    private Arm(){
-        leadFx = new TalonFX(Constants.Arm.ARM_LEAD_ID);
-        followFx = new TalonFX(Constants.Arm.ARM_FOLLOW_ID);
+    private Wrist(){
+        leadFx = new TalonFX(Constants.Arm.WRIST_LEAD_ID, "rio");
+        followFx = new TalonFX(Constants.Arm.WRIST_FOLLOW_ID);
 
         limitConfigs = new HardwareLimitSwitchConfigs().
-        withReverseLimitSource(ReverseLimitSourceValue.RemoteCANifier);
+        withForwardLimitSource(ForwardLimitSourceValue.RemoteCANifier);
+
+        leadFx.setInverted(true);
 
         followFx.setControl(new Follower(leadFx.getDeviceID(), true));
 
@@ -40,10 +42,10 @@ public class Arm {
     }
 
     public void getLimit(){
-        SmartDashboard.putNumber("armLimit", leadFx.getReverseLimit().getValue().value);
+        SmartDashboard.putNumber("wristLimit", leadFx.getReverseLimit().getValue().value);
     }
 
-    public static Arm getSystem(){
-        return armSys;
+    public static Wrist getSystem(){
+        return wristSys;
     }
 }
