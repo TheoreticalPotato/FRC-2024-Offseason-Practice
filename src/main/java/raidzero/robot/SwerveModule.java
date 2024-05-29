@@ -91,8 +91,6 @@ public class SwerveModule {
 
         rotor = new TalonFX(rotorID, Constants.Swerve.CANBUS_ID);
         rotor.getConfigurator().apply(rotorConfig);
-        // resetToAbsolute();
-
 
         /* CANCoder */
         CANCoderConfig = new CANcoderConfiguration();

@@ -4,8 +4,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -21,13 +25,11 @@ import static raidzero.robot.Constants.Arm.*;
 public class Arm extends SubsystemBase {
     private TalonFX arm;
     private TalonFXConfiguration armConfig;
+    private MotionMagicConfigs motionMagicConfigs;
+    private Slot0Configs slot0Configs;
 
     private TalonFX follow;
     private TalonFXConfiguration followConfig;
-
-    private RelativeEncoder encoder;
-    private SparkPIDController pid;
-    private SparkLimitSwitch limit1, limit2;
 
     private static Arm armSys = new Arm();
 
@@ -38,37 +40,49 @@ public class Arm extends SubsystemBase {
 
         armConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+        armConfig.CurrentLimits.SupplyCurrentLimit = CURRENT_LIMIT;
+        armConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
+        // TODO: Find these values
+        // https://v6.docs.ctr-electronics.com/en/stable/docs/api-reference/device-specific/talonfx/motion-magic.html#using-motion-magic-in-api
+        slot0Configs = armConfig.Slot0;
+        slot0Configs.kS = 0.25;
+        slot0Configs.kV = 0.12;
+        slot0Configs.kA = 0.01;
+        slot0Configs.kP = 4.8;
+        slot0Configs.kI = 0;
+        slot0Configs.kD = 0.1;
+
+        motionMagicConfigs = armConfig.MotionMagic;
+        motionMagicConfigs.MotionMagicCruiseVelocity = 80;
+        motionMagicConfigs.MotionMagicAcceleration = 160;
+        motionMagicConfigs.MotionMagicJerk = 1600;
+
+        // TODO: Soft limits
+        // This is ctre version
+        // arm.setSoftLimit(SoftLimitDirection.kReverse, -28);
+        // arm.enableSoftLimit(SoftLimitDirection.kReverse, true);
+
+        armConfig.HardwareLimitSwitch.ForwardLimitEnable = true;
+
         arm = new TalonFX(ARM_MOTOR_ID);
+        arm.getConfigurator().apply(armConfig);
 
-        arm.setSoftLimit(SoftLimitDirection.kReverse, -28);
-        arm.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        arm.setSmartCurrentLimit(CURRENT_LIMIT);
+        followConfig = new TalonFXConfiguration();
 
-        follow = new CANSparkMax(ARM_FOLLOW_ID, MotorType.kBrushless);
-        follow.restoreFactoryDefaults();
-        follow.setIdleMode(IdleMode.kBrake);
-        follow.follow(arm, true);
+        followConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        pid = arm.getPIDController();
-        pid.setP(kP, 0);
-        pid.setI(kI, 0);
-        pid.setD(kD, 0);
-        pid.setIZone(kIz, 0);
-        pid.setFF(kFF, 0);
-        pid.setOutputRange(MIN_OUTPUT, MAX_OUTPUT);
+        followConfig.HardwareLimitSwitch.ForwardLimitEnable =
 
-
-        encoder = arm.getEncoder();
-
-        limit1 = arm.getForwardLimitSwitch(Type.kNormallyOpen);
-        limit1.enableLimitSwitch(true);
-
-        limit2 = follow.getForwardLimitSwitch(Type.kNormallyOpen);
-        limit2.enableLimitSwitch(true);
+        follow = new TalonFX(ARM_FOLLOW_ID);
+        follow.getConfigurator().apply(followConfig);
+        follow.setControl(new Follower(ARM_MOTOR_ID, true));
     }
 
     public void trapezoidToPID(State output) {
-        pid.setReference(output.position, CANSparkMax.ControlType.kPosition);// 0, FEED_FORWARD.calculate(output.position, output.velocity));
+        pid.setReference(output.position, CANSparkMax.ControlType.kPosition);// 0,
+                                                                             // FEED_FORWARD.calculate(output.position,
+                                                                             // output.velocity));
         SmartDashboard.putNumber("Arm Trapazoid setpoint", output.position);
     }
 
@@ -93,14 +107,15 @@ public class Arm extends SubsystemBase {
         return encoder;
     }
 
-    public boolean getLimit(){
+    public boolean getLimit() {
         if (limit1.isPressed() || limit2.isPressed())
             encoder.setPosition(0);
         return limit1.isPressed() || limit2.isPressed();
     }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+    }
 
     public static Arm system() {
         return armSys;
